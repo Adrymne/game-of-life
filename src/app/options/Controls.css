@@ -1,0 +1,9 @@
+.options__controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.options__controls button {
+  margin: 0 5px;
+}
