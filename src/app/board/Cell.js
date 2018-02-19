@@ -1,21 +1,16 @@
 import React from 'react';
 import './Cell.css';
+import { applySpec } from 'ramda';
+import { connect } from 'react-redux';
+import { isLive } from 'store/selectors';
+import * as actions from 'store/actions';
 
-const state = () => {
-  switch (Math.floor(Math.random() * 3)) {
-    case 0:
-      return 'live';
-    case 1:
-      return 'dead';
-    case 2:
-      return 'unknown';
-    default:
-      return '';
-  }
-};
-
-const Cell = ({ contents }) => (
-  <div className={`board__cell ${state()}`}>{contents}</div>
+const Cell = ({ isLive, toggleCell, cell }) => (
+  <div
+    className={`board__cell ${isLive ? 'live' : 'dead'}`}
+    onClick={() => toggleCell(cell)}
+  />
 );
 
-export default Cell;
+const mapStateToProps = applySpec({ isLive });
+export default connect(mapStateToProps, actions)(Cell);
