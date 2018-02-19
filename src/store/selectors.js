@@ -15,7 +15,7 @@ type State = {
   board :: Board
 }
 */
-const boardSize = state => state.board.size;
+export const boardSize = state => state.board.size;
 const liveCells = state => state.board.liveCells;
 
 // getBoard :: State -> [[Cell]]

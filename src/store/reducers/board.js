@@ -25,7 +25,7 @@ const lensCell = pipe(toKey, lensProp);
 const toggleCell = (state, { payload: cell }) =>
   evolve({ liveCells: over(lensCell(cell), not) }, state);
 
-const isInBounds = (cell, size) => cell.x < size.rows && cell.y < size.cols;
+const isInBounds = (cell, size) => cell.x < size.cols && cell.y < size.rows;
 // killOutsiders :: { rows :: Int, cols :: Int } -> Board -> Board
 const killOutsiders = size =>
   pickBy((isLive, key) => isLive && isInBounds(fromKey(key), size));

@@ -39,18 +39,18 @@ it('CLEAR_BOARD', () => {
 it('RESIZE_BOARD', () => {
   const state = {
     liveCells: {
-      [toKey(50, 3)]: true,
+      [toKey(11, 3)]: true,
       [toKey(1, 19)]: true,
-      [toKey(12, 20)]: true
+      [toKey(9, 20)]: true
     },
     size: 'blah'
   };
-  const action = resizeBoard(10, 20);
+  const action = resizeBoard(20, 10);
 
   const result = subject(state, action);
 
   expect(result).toEqual({
     liveCells: { [toKey(1, 19)]: true },
-    size: { rows: 10, cols: 20 }
+    size: { rows: 20, cols: 10 }
   });
 });
