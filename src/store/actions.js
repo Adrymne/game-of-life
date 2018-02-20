@@ -9,3 +9,9 @@ export const resizeBoard = (rows, cols) => ({
   type: RESIZE_BOARD,
   payload: { rows, cols }
 });
+
+export const TOGGLE_ACTIVE = 'TOGGLE_ACTIVE';
+export const toggleActive = () => ({ type: TOGGLE_ACTIVE });
+
+export const ADVANCE_BOARD = 'ADVANCE_BOARD';
+export const advanceBoard = () => ({ type: ADVANCE_BOARD });

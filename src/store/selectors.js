@@ -12,11 +12,13 @@ type Board = {
 }
 
 type State = {
-  board :: Board
+  board :: Board,
+  isActive :: Bool
 }
 */
 export const boardSize = state => state.board.size;
 const liveCells = state => state.board.liveCells;
+export const isActive = state => state.isActive;
 
 // getBoard :: State -> [[Cell]]
 export const getBoard = createSelector(boardSize, ({ rows, cols }) =>

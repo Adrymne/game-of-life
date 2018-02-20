@@ -1,5 +1,10 @@
 import subject from './board';
-import { toggleCell, clearBoard, resizeBoard } from 'store/actions';
+import {
+  toggleCell,
+  clearBoard,
+  resizeBoard,
+  advanceBoard
+} from 'store/actions';
 
 const toKey = (x, y) => JSON.stringify({ x, y });
 
@@ -52,5 +57,26 @@ it('RESIZE_BOARD', () => {
   expect(result).toEqual({
     liveCells: { [toKey(1, 19)]: true },
     size: { rows: 20, cols: 10 }
+  });
+});
+
+it('ADVANCE_BOARD', () => {
+  const state = {
+    liveCells: {
+      [toKey(0, 0)]: true,
+      [toKey(-1, 0)]: true,
+      [toKey(1, 0)]: true
+    }
+  };
+  const action = advanceBoard();
+
+  const result = subject(state, action);
+
+  expect(result).toEqual({
+    liveCells: {
+      [toKey(0, 0)]: true,
+      [toKey(0, -1)]: true,
+      [toKey(0, 1)]: true
+    }
   });
 });

@@ -11,11 +11,19 @@ import {
   filter,
   map,
   range,
-  set
+  set,
+  keys,
+  fromPairs
 } from 'ramda';
+import gameOfLife from 'gameOfLife';
 import { createReducer } from 'utils';
 import { toKey, fromKey } from 'types';
-import { TOGGLE_CELL, CLEAR_BOARD, RESIZE_BOARD } from 'store/actions';
+import {
+  TOGGLE_CELL,
+  CLEAR_BOARD,
+  RESIZE_BOARD,
+  ADVANCE_BOARD
+} from 'store/actions';
 
 // REDUCERS
 
@@ -25,13 +33,21 @@ const lensCell = pipe(toKey, lensProp);
 const toggleCell = (state, { payload: cell }) =>
   evolve({ liveCells: over(lensCell(cell), not) }, state);
 
+// isInBounds :: (Cell, BoardSize) -> Bool
 const isInBounds = (cell, size) => cell.x < size.cols && cell.y < size.rows;
-// killOutsiders :: { rows :: Int, cols :: Int } -> Board -> Board
+// killOutsiders :: BoardSize -> Board -> Board
 const killOutsiders = size =>
   pickBy((isLive, key) => isLive && isInBounds(fromKey(key), size));
-
 const resizeBoard = (state, { payload: size }) =>
   evolve({ liveCells: killOutsiders(size), size: () => size }, state);
+
+// toLiveCellArray :: Board -> [Cell]
+const toLiveCellArray = pipe(keys, map(fromKey));
+// fromLiveCellArray :: [Cell] -> Board
+const fromLiveCellArray = pipe(map(cell => [toKey(cell), true]), fromPairs);
+const advanceBoard = evolve({
+  liveCells: pipe(toLiveCellArray, gameOfLife, fromLiveCellArray)
+});
 
 // INITIAL STATE
 
@@ -59,5 +75,6 @@ const DEFAULT = {
 export default createReducer(DEFAULT, {
   [TOGGLE_CELL]: toggleCell,
   [CLEAR_BOARD]: evolve({ liveCells: () => ({}) }),
-  [RESIZE_BOARD]: resizeBoard
+  [RESIZE_BOARD]: resizeBoard,
+  [ADVANCE_BOARD]: advanceBoard
 });
