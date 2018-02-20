@@ -1,14 +1,13 @@
 import React from 'react';
 import './Stats.css';
+import { connect } from 'react-redux';
+import { applySpec } from 'ramda';
+import { generationCount } from 'store/selectors';
 
-const dimensions = { rows: 30, cols: 30 };
-const generationCount = 234;
-
-const Stats = () => (
+const Stats = ({ generationCount }) => (
   <div className="options__stats">
-    <div>{`Size: ${dimensions.rows} x ${dimensions.cols}`}</div>
     <div>Generations: {generationCount}</div>
   </div>
 );
 
-export default Stats;
+export default connect(applySpec({ generationCount }))(Stats);

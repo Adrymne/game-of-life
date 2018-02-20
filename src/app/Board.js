@@ -2,17 +2,17 @@ import React from 'react';
 import Cell from './board/Cell';
 import makeSquare from 'components/makeSquare';
 import './Board.css';
+import { applySpec } from 'ramda';
+import { connect } from 'react-redux';
+import { getBoard } from 'store/selectors';
 
-const row = new Array(30).fill(0);
-const board = new Array(30).fill(row);
-
-const Board = () => (
+const Board = ({ board }) => (
   <div className="board">
-    {board.map((row, i) => (
-      <div className="board__row" key={i}>
-        {row.map((col, j) => (
-          <div className="board__col" key={j}>
-            <Cell />
+    {board.map((row, y) => (
+      <div className="board__row" key={y}>
+        {row.map((cell, x) => (
+          <div className="board__col" key={x}>
+            <Cell cell={cell} />
           </div>
         ))}
       </div>
@@ -20,4 +20,5 @@ const Board = () => (
   </div>
 );
 
-export default makeSquare(Board);
+const mapStateToProps = applySpec({ board: getBoard });
+export default makeSquare(connect(mapStateToProps)(Board));
