@@ -1,8 +1,9 @@
 import { createStore, compose } from 'redux';
 import { install } from 'redux-loop';
 import rootReducer from './reducers';
+import { toggleActive } from 'store/actions';
 
-export default createStore(
+const store = createStore(
   rootReducer,
   compose(
     install(),
@@ -11,3 +12,6 @@ export default createStore(
       : v => v
   )
 );
+store.dispatch(toggleActive());
+
+export default store;
