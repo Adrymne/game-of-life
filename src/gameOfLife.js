@@ -67,7 +67,7 @@ const survivors = prevBoard =>
 // toBoard :: [Cell] -> Board
 const toBoard = pipe(map(cell => [toKey(cell), true]), fromPairs);
 // fromBoard :: Board -> [Cell]
-const fromBoard = pipe(keys, map(fromKey));
+export const fromBoard = pipe(filter(isLive => isLive), keys, map(fromKey));
 
 // gameOfLife :: Board -> Board
 export default board =>

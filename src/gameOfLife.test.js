@@ -62,6 +62,19 @@ describe('willSurvive', () => {
   });
 });
 
+it('fromBoard', () => {
+  const subject = sut.fromBoard;
+  const toKey = (x, y) => JSON.stringify({ x, y });
+  const board = {
+    [toKey(0, 1)]: true,
+    [toKey(1, 0)]: false
+  };
+
+  const result = subject(board);
+
+  expect(result).toEqual([{ x: 0, y: 1 }]);
+});
+
 describe('gameOfLife', () => {
   const subject = sut.default;
   const toKey = (x, y) => JSON.stringify({ x, y });
