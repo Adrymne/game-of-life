@@ -1,0 +1,16 @@
+.options__dimensions-input {
+  width: 100%;
+  display: flex;
+}
+
+.options__dimensions-input-label {
+  align-self: center;
+  margin: 0 5px;
+}
+.options__dimensions-input button {
+  margin-left: 5px;
+}
+
+.options__dimensions-input input {
+  text-align: center;
+}
