@@ -28,41 +28,43 @@ it('frequencies', () => {
 
 describe('willSurvive', () => {
   const subject = sut.willSurvive;
+  const toKey = (x, y) => JSON.stringify({ x, y });
 
   it('lives with 3 live neighbours', () => {
-    const liveCells = 'blah';
+    const prevBoard = 'blah';
     const data = { cell: 'blah blah', times: 3 };
 
-    const result = subject(liveCells)(data);
+    const result = subject(prevBoard)(data);
 
     expect(result).toBe(true);
   });
 
   it('lives with 2 live neighbours if it was also previously alive', () => {
-    const liveCells = [{ x: 1, y: 1 }];
+    const prevBoard = { [toKey(1, 1)]: true };
     const data = { cell: { x: 1, y: 1 }, times: 2 };
 
-    const result = subject(liveCells)(data);
+    const result = subject(prevBoard)(data);
 
     expect(result).toBe(true);
   });
 
   it('dies otherwise', () => {
-    const liveCells = 'blah blah';
+    const prevBoard = 'blah blah';
     const data = n => ({ cell: 'cell', times: n });
 
-    expect(subject(liveCells)(data(0))).toBe(false);
-    expect(subject(liveCells)(data(1))).toBe(false);
-    expect(subject(liveCells)(data(4))).toBe(false);
-    expect(subject(liveCells)(data(5))).toBe(false);
-    expect(subject(liveCells)(data(6))).toBe(false);
-    expect(subject(liveCells)(data(7))).toBe(false);
-    expect(subject(liveCells)(data(8))).toBe(false);
+    expect(subject(prevBoard)(data(0))).toBe(false);
+    expect(subject(prevBoard)(data(1))).toBe(false);
+    expect(subject(prevBoard)(data(4))).toBe(false);
+    expect(subject(prevBoard)(data(5))).toBe(false);
+    expect(subject(prevBoard)(data(6))).toBe(false);
+    expect(subject(prevBoard)(data(7))).toBe(false);
+    expect(subject(prevBoard)(data(8))).toBe(false);
   });
 });
 
 describe('gameOfLife', () => {
   const subject = sut.default;
+  const toKey = (x, y) => JSON.stringify({ x, y });
 
   /*
   - - -    - x -    - - -
@@ -70,12 +72,20 @@ describe('gameOfLife', () => {
   - - -    - x -    - - -
   */
   it('blinker oscillator', () => {
-    const cells = [{ x: -1, y: 0 }, { x: 0, y: 0 }, { x: 1, y: 0 }];
+    const board = {
+      [toKey(-1, 0)]: true,
+      [toKey(0, 0)]: true,
+      [toKey(1, 0)]: true
+    };
 
-    const result = subject(cells);
+    const result = subject(board);
 
-    expect(result).toEqual([{ x: 0, y: -1 }, { x: 0, y: 0 }, { x: 0, y: 1 }]);
-    expect(subject(result)).toEqual(cells);
+    expect(result).toEqual({
+      [toKey(0, -1)]: true,
+      [toKey(0, 0)]: true,
+      [toKey(0, 1)]: true
+    });
+    expect(subject(result)).toEqual(board);
   });
 
   /*
@@ -86,18 +96,18 @@ describe('gameOfLife', () => {
   */
   it('beacon oscillator', () => {
     // prettier-ignore
-    const cells = [
-      { x: 0, y: 2 }, { x: 0, y: 3 }, { x: 1, y: 2 }, { x: 1, y: 3 },
-      { x: 2, y: 0 }, { x: 2, y: 1 }, { x: 3, y: 0 }, { x: 3, y: 1 }
-    ];
+    const board = {
+      [toKey(0, 2)]: true, [toKey(0, 3)]: true, [toKey(1, 2)]: true, [toKey(1, 3)]: true,
+      [toKey(2, 0)]: true, [toKey(2, 1)]: true, [toKey(3, 0)]: true, [toKey(3, 1)]: true,
+    }
 
-    const result = subject(cells);
+    const result = subject(board);
 
     // prettier-ignore
-    expect(result).toEqual([
-      { x: 0, y: 2 }, { x: 0, y: 3 }, { x: 1, y: 3 },
-      { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 3, y: 1 }
-    ]);
-    expect(subject(result)).toEqual(cells);
+    expect(result).toEqual({
+      [toKey(0, 2)]: true, [toKey(0, 3)]: true, [toKey(1, 3)]: true,
+      [toKey(2, 0)]: true, [toKey(3, 0)]: true, [toKey(3, 1)]: true,
+    });
+    expect(subject(result)).toEqual(board);
   });
 });

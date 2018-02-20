@@ -10,11 +10,13 @@ import {
   pipe,
   sort,
   groupWith,
-  contains,
   prop,
+  keys,
+  fromPairs,
   chain,
   filter
 } from 'ramda';
+import { toKey, fromKey } from 'types';
 // Based on: https://rhnh.net/2012/01/02/conway's-game-of-life-in-haskell/
 /*
 Algorithm:
@@ -50,18 +52,25 @@ export const frequencies = pipe(
   map(xs => ({ cell: xs[0], times: xs.length }))
 );
 
-// willSurvive :: [Cell] -> { cell :: Cell, times :: Int } -> Bool
-export const willSurvive = liveCells => ({ cell, times }) =>
-  times === 3 || (times === 2 && contains(cell, liveCells));
+// willSurvive :: Board -> { cell :: Cell, times :: Int } -> Bool
+export const willSurvive = prevBoard => ({ cell, times }) =>
+  times === 3 || (times === 2 && prevBoard[toKey(cell)]);
 
-// survivors :: [Cell] -> [{ cell :: Cell, times :: Int }] -> [Cell]
-const survivors = liveCells =>
+// survivors :: Board -> [{ cell :: Cell, times :: Int }] -> [Cell]
+const survivors = prevBoard =>
   transduce(
-    compose(filter(willSurvive(liveCells)), map(prop('cell'))),
+    compose(filter(willSurvive(prevBoard)), map(prop('cell'))),
     (xs, x) => append(x, xs),
     []
   );
 
-// gameOfLife :: [Cell] -> [Cell]
-export default liveCells =>
-  pipe(chain(neighbours), frequencies, survivors(liveCells))(liveCells);
+// toBoard :: [Cell] -> Board
+const toBoard = pipe(map(cell => [toKey(cell), true]), fromPairs);
+// fromBoard :: Board -> [Cell]
+const fromBoard = pipe(keys, map(fromKey));
+
+// gameOfLife :: Board -> Board
+export default board =>
+  pipe(fromBoard, chain(neighbours), frequencies, survivors(board), toBoard)(
+    board
+  );

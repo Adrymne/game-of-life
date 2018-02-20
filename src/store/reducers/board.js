@@ -11,9 +11,7 @@ import {
   filter,
   map,
   range,
-  set,
-  keys,
-  fromPairs
+  set
 } from 'ramda';
 import gameOfLife from 'gameOfLife';
 import { createReducer } from 'utils';
@@ -41,17 +39,9 @@ const killOutsiders = size =>
 const resizeBoard = (state, { payload: size }) =>
   evolve({ liveCells: killOutsiders(size), size: () => size }, state);
 
-// toLiveCellArray :: Board -> [Cell]
-const toLiveCellArray = pipe(keys, map(fromKey));
-// fromLiveCellArray :: [Cell] -> Board
-const fromLiveCellArray = pipe(map(cell => [toKey(cell), true]), fromPairs);
-const advanceBoard = evolve({
-  liveCells: pipe(toLiveCellArray, gameOfLife, fromLiveCellArray)
-});
-
 // INITIAL STATE
 
-// randonIsLive :: () -> Bool
+// randomIsLive :: () -> Bool
 const randomIsLive = () => Math.random() < 0.15;
 // generateCoords :: BoardSize -> [[Int, Int]]
 // based on: https://gist.github.com/artisin/6fd1e9305f6a1ce087df
@@ -76,5 +66,5 @@ export default createReducer(DEFAULT, {
   [TOGGLE_CELL]: toggleCell,
   [CLEAR_BOARD]: evolve({ liveCells: () => ({}) }),
   [RESIZE_BOARD]: resizeBoard,
-  [ADVANCE_BOARD]: advanceBoard
+  [ADVANCE_BOARD]: evolve({ liveCells: gameOfLife })
 });
